@@ -1,6 +1,7 @@
 from queue import PriorityQueue
 import time
 from math import sqrt
+import tracemalloc
 
 NODES = 'ESNW'
 isManhattan = False
@@ -146,15 +147,37 @@ class SearchAlgo:
 
         self.mainTime = end - start
         return self.forwardPath, self.i, self.mainTime
-
+    
 class DFS(SearchAlgo):
     def __init__(self, m, goal):
         super().__init__(m, goal, algo='dfs')
+        self.memory_usage = 0  # Initialize memory usage variable
+
+    def measure_memory_usage(self):
+        tracemalloc.start()  # Start memory profiling
+        self.search_path()  # Call the search algorithm function
+        current, peak = tracemalloc.get_traced_memory()  # Get memory usage
+        self.memory_usage = peak  # Store peak memory usage
+        tracemalloc.stop()  # Stop memory profiling
 
 class BFS(SearchAlgo):
     def __init__(self, m, goal):
         super().__init__(m, goal, algo='bfs')
 
+    def measure_memory_usage(self):
+        tracemalloc.start()  # Start memory profiling
+        self.search_path()  # Call the search algorithm function
+        current, peak = tracemalloc.get_traced_memory()  # Get memory usage
+        self.memory_usage = peak  # Store peak memory usage
+        tracemalloc.stop()  # Stop memory profiling
+
 class AStar(SearchAlgo):
     def __init__(self, m, goal):
         super().__init__(m, goal, algo='a*')
+
+    def measure_memory_usage(self):
+        tracemalloc.start()  # Start memory profiling
+        self.search_path()  # Call the search algorithm function
+        current, peak = tracemalloc.get_traced_memory()  # Get memory usage
+        self.memory_usage = peak  # Store peak memory usage
+        tracemalloc.stop()  # Stop memory profiling
