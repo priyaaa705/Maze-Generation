@@ -1,4 +1,5 @@
 import random, time
+import tracemalloc
 
 class MarkovDecisionProcess:
     def __init__(self, m=None, goal=None, isDeterministic=True):
@@ -12,6 +13,15 @@ class MarkovDecisionProcess:
         self.create_actions()
 
         self.target = [self.goal]
+
+    # Function to measure memory usage
+    def measure_memory_usage(self, algorithm):
+        tracemalloc.start()  # Start memory profiling
+        algorithm()  # Call the algorithm function
+        current, peak = tracemalloc.get_traced_memory()  # Get memory usage
+        self.memory_usage = peak  # Store peak memory usage
+        tracemalloc.stop()  # Stop memory profiling
+        return current, peak
 
     def set_heuristics(self):
         for key, value in self.actions.items():
@@ -66,6 +76,15 @@ class ValueIteration(MarkovDecisionProcess):
         self.algoPath = {}
         self.explored = []
         self.mainTime = 0
+
+    # Function to measure memory usage
+    def measure_memory_usage(self, algorithm):
+        tracemalloc.start()  # Start memory profiling
+        algorithm()  # Call the algorithm function
+        current, peak = tracemalloc.get_traced_memory()  # Get memory usage
+        self.memory_usage = peak  # Store peak memory usage
+        tracemalloc.stop()  # Stop memory profiling
+        return current, peak
 
     def get_maxDelta(self, delta, utilityMax, state):
         return max(delta, abs(utilityMax - self.values[state]))
@@ -146,6 +165,14 @@ class PolicyIteration(MarkovDecisionProcess):
         
         self.algoPath = {}
         self.mainTime = 0
+
+    def measure_memory_usage(self, algorithm):
+        tracemalloc.start()  # Start memory profiling
+        algorithm()  # Call the algorithm function
+        current, peak = tracemalloc.get_traced_memory()  # Get memory usage
+        self.memory_usage = peak  # Store peak memory usage
+        tracemalloc.stop()  # Stop memory profiling
+        return current, peak
 
     def calculate_policyIteration(self):
         start = time.time()
