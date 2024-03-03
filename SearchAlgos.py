@@ -1,10 +1,10 @@
 from queue import PriorityQueue
 import time
 from math import sqrt
-import tracemalloc
 
 NODES = 'ESNW'
 isManhattan = False
+
 
 def calculateEstimatedDistance(x, y=(1, 1)):
     x1, y1 = x
@@ -17,6 +17,7 @@ def calculateEstimatedDistance(x, y=(1, 1)):
         # EUCLIDEAN
         return sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
+
 class SearchAlgo:
     def __init__(self, m=None, goal=None, algo=None):
 
@@ -26,6 +27,7 @@ class SearchAlgo:
             raise AssertionError("Goal Cannot be None")
         self.goal = goal
         self.algo = algo
+
         self.nodes = NODES
 
         # | DFS BFS PARAMETERS
@@ -147,37 +149,16 @@ class SearchAlgo:
 
         self.mainTime = end - start
         return self.forwardPath, self.i, self.mainTime
-    
+
+
 class DFS(SearchAlgo):
     def __init__(self, m, goal):
         super().__init__(m, goal, algo='dfs')
-        self.memory_usage = 0  # Initialize memory usage variable
-
-    def measure_memory_usage(self):
-        tracemalloc.start()  # Start memory profiling
-        self.search_path()  # Call the search algorithm function
-        current, peak = tracemalloc.get_traced_memory()  # Get memory usage
-        self.memory_usage = peak  # Store peak memory usage
-        tracemalloc.stop()  # Stop memory profiling
 
 class BFS(SearchAlgo):
     def __init__(self, m, goal):
         super().__init__(m, goal, algo='bfs')
 
-    def measure_memory_usage(self):
-        tracemalloc.start()  # Start memory profiling
-        self.search_path()  # Call the search algorithm function
-        current, peak = tracemalloc.get_traced_memory()  # Get memory usage
-        self.memory_usage = peak  # Store peak memory usage
-        tracemalloc.stop()  # Stop memory profiling
-
 class AStar(SearchAlgo):
     def __init__(self, m, goal):
         super().__init__(m, goal, algo='a*')
-
-    def measure_memory_usage(self):
-        tracemalloc.start()  # Start memory profiling
-        self.search_path()  # Call the search algorithm function
-        current, peak = tracemalloc.get_traced_memory()  # Get memory usage
-        self.memory_usage = peak  # Store peak memory usage
-        tracemalloc.stop()  # Stop memory profiling
