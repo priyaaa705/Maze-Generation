@@ -60,11 +60,13 @@ To run, select checkboxes from the MDP section and click on the "Run Markov" but
 - The algorithm will run in a new window
 
 #### Analysis Parameters
-To compare the algorithms, two metrics are displayed on top of the maze:
+To compare the algorithms, three metrics are displayed on top of the maze:
 1. Final Path 
+2. Searched Path
 2. Time Taken
 
 ## References
+
 [1] MAN1986, (2021) pyamaze [Source Code] https://github.com/MAN1986/pyamaze
 
 [2] Paul E. Black, "Manhattan distance", in Dictionary of Algorithms and Data Structures [online], Paul E. Black, ed. 11 February 2019. Available from: https://www.nist.gov/dads/HTML/manhattanDistance.html
@@ -72,3 +74,9 @@ To compare the algorithms, two metrics are displayed on top of the maze:
 [3] Paul E. Black, "Euclidean distance", in Dictionary of Algorithms and Data Structures [online], Paul E. Black, ed. 17 December 2004. Available from: https://www.nist.gov/dads/HTML/euclidndstnc.html
 
 [4] Russell, S.J. and Norvig, P. (2022) Artificial Intelligence: A modern approach. Harlow: Pearson Education Limited.
+
+[5] MDP_VI_PI_Q-learning_AIMA.ipynb by Tirthajyoti Sarkar: https://github.com/tirthajyoti/RL_basics
+
+[6] Markov Decision Process by Joseph Su. Department of Computer Science, Georgia Institute of Technology: https://jsu800.github.io/docs/ml_mdp.pdf
+
+[7] MazeMDP by Sally Gao. GitHub Repository: https://github.com/sally-gao/mazemdp
