@@ -7,6 +7,10 @@ run_search_algos = False
 run_mdp_algo = False
 SearchAlgoMaze = None
 
+run_dfs = False
+run_bfs = False
+run_astar = False
+
 AlgoRun = []
 SetDeterministic = True
 
@@ -14,7 +18,7 @@ SetValueIteration = True
 SetPolicyIteration = True
 
 def set_values():
-    global rows, cols, goal_x, goal_y
+    global rows, cols, goal_x, goal_y, run_dfs, run_bfs, run_astar
     rows, cols = ent_rows.get(), ent_cols.get()
     goal_x, goal_y = ent_goalX.get(), ent_goalY.get()
 
@@ -23,6 +27,10 @@ def set_values():
     SetDeterministic = CheckDeterministic.get()
     SetValueIteration = CheckValueIteration.get()
     SetPolicyIteration = CheckPolicyIteration.get()
+
+    run_dfs = CheckRunDFS.get() == 1
+    run_bfs = CheckRunBFS.get() == 1
+    run_astar = CheckRunAStar.get() == 1
 
 def run_search_algo():
     global run_search_algos
@@ -46,9 +54,9 @@ def check_changed():
 # ---------------WINDOW----------------------
 window = Tk()
 window.title('ARTIFICIAL INTELLIGENCE - Assignment1')
-window.geometry("450x450+0+0")
+window.geometry("250x250+0+0")
 window.minsize(width=750, height=100)
-window.config(pady=5, bg='#252527')
+window.config(pady=5, bg='#FFFFFF')
 
 # -----------------SEARCH ALGORITHM------------------------
 window.columnconfigure(0, weight=1, minsize=150)
@@ -62,11 +70,11 @@ lbl_algos = Label(master=frm_algo, text='Run Algos', font='Helvetica 14 bold', f
 
 AlgoRunning = StringVar(value="Running Algos:\nDFS, BFS")
 lbl_algosRunning = Label(master=frm_algo, textvariable=AlgoRunning, font='Helvetica 14', foreground='#ecfc03',
-                         height=6, bg='#252527')
+                         height=6, bg='#FFFFFF')
 
 CheckRunMode = IntVar(value=1)
 chk_runMode = Checkbutton(master=frm_algo, text='Run Together', variable=CheckRunMode, onvalue=1, offvalue=0,
-                          command=check_changed, bg='#252527', fg='white')
+                          command=check_changed, bg='#FFFFFF', fg='black')
 
 CheckRunDFS = IntVar(value=1)
 chk_runDFS = Checkbutton(master=frm_algo, text='DFS', variable=CheckRunDFS, onvalue=1, offvalue=0,
@@ -140,9 +148,9 @@ lbl_maze = Label(master=frm_maze, text='Maze Parameters', font='Helvetica 18 bol
 lbl_rows = Label(master=frm_maze, text="Rows", bg='#252527', fg='white')
 lbl_cols = Label(master=frm_maze, text="Cols", bg='#252527', fg='white')
 
-ent_rows = Entry(master=frm_maze, width=5, highlightthickness=1, highlightcolor='#03cafc', bg='#252527', fg='white')
+ent_rows = Entry(master=frm_maze, width=5, highlightthickness=1, highlightcolor='#03cafc', bg='#FFFFFF', fg='black')
 ent_rows.insert(END, string=f'{rows}')
-ent_cols = Entry(master=frm_maze, width=5, highlightthickness=1, highlightcolor='#03cafc', bg='#252527', fg='white')
+ent_cols = Entry(master=frm_maze, width=5, highlightthickness=1, highlightcolor='#03cafc', bg='#FFFFFF', fg='black')
 ent_cols.insert(END, string=f'{cols}')
 
 lbl_goal = Label(master=frm_maze, text="Goal", font='Helvetica 14 bold', foreground='light green', bg='#252527')
@@ -151,9 +159,9 @@ lbl_gridSize = Label(master=frm_maze, text="Grid Size", font='Helvetica 14 bold'
 lbl_goalX = Label(master=frm_maze, text="X", bg='#252527', fg='white')
 lbl_goalY = Label(master=frm_maze, text="Y", bg='#252527', fg='white')
 
-ent_goalX = Entry(master=frm_maze, width=5, highlightthickness=1, highlightcolor='#03cafc', bg='#252527', fg='white')
+ent_goalX = Entry(master=frm_maze, width=5, highlightthickness=1, highlightcolor='#03cafc', bg='#FFFFFF', fg='black')
 ent_goalX.insert(END, string=f'{goal_x}')
-ent_goalY = Entry(master=frm_maze, width=5, highlightthickness=1, highlightcolor='#03cafc', bg='#252527', fg='white')
+ent_goalY = Entry(master=frm_maze, width=5, highlightthickness=1, highlightcolor='#03cafc', bg='#FFFFFF', fg='black')
 ent_goalY.insert(END, string=f'{goal_y}')
 
 # | DRAW
