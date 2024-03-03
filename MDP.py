@@ -1,5 +1,4 @@
 import random, time
-import tracemalloc
 
 class MarkovDecisionProcess:
     def __init__(self, m=None, goal=None, isDeterministic=True):
@@ -13,15 +12,6 @@ class MarkovDecisionProcess:
         self.create_actions()
 
         self.target = [self.goal]
-
-    # Function to measure memory usage
-    def measure_memory_usage(self, algorithm):
-        tracemalloc.start()  # Start memory profiling
-        algorithm()  # Call the algorithm function
-        current, peak = tracemalloc.get_traced_memory()  # Get memory usage
-        self.memory_usage = peak  # Store peak memory usage
-        tracemalloc.stop()  # Stop memory profiling
-        return current, peak
 
     def set_heuristics(self):
         for key, value in self.actions.items():
@@ -69,22 +59,16 @@ class ValueIteration(MarkovDecisionProcess):
 
         self._reward = -4  # LIVING REWARD
         self._max_error = 10 ** (-3)
+
         self.target = [self.goal]
         self.values = {state: 0 for state in self.actions.keys()}
         self.values[self.target[0]] = 1
 
         self.algoPath = {}
-        self.explored = []
-        self.mainTime = 0
 
-    # Function to measure memory usage
-    def measure_memory_usage(self, algorithm):
-        tracemalloc.start()  # Start memory profiling
-        algorithm()  # Call the algorithm function
-        current, peak = tracemalloc.get_traced_memory()  # Get memory usage
-        self.memory_usage = peak  # Store peak memory usage
-        tracemalloc.stop()  # Stop memory profiling
-        return current, peak
+        self.explored = []
+
+        self.mainTime = 0
 
     def get_maxDelta(self, delta, utilityMax, state):
         return max(delta, abs(utilityMax - self.values[state]))
@@ -107,12 +91,16 @@ class ValueIteration(MarkovDecisionProcess):
                     if childCell == self.target[0]:
                         reward = 10000
                     utility = 0
+
                     utility += super().calculate_ValueIterationUtility(prob, reward, childCell, self.values)
+
                     if utility > utilityMax:
                         utilityMax = utility
                         
                 delta = self.get_maxDelta(delta, utilityMax, state)
+
                 self.values[state] = utilityMax
+
             if delta < self._max_error:
                 break
         end = time.time()
@@ -121,35 +109,38 @@ class ValueIteration(MarkovDecisionProcess):
     def create_searchPath(self, currNode):
         start = time.time()
         node = currNode
+        steps = 0  # Initialize step counter
 
         while True:
-            selectedNode = None
-            selectedNodeVal = None
             if node == self.target[0]:
                 break
 
+            selectedNode = None
+            selectedNodeVal = None
+
             for direction in 'ENWS':
-                if self.m.maze_map[node][direction] and self.move(node, direction) not in self.explored:
+                if self.m.maze_map[node][direction]:
                     traverseDirection = self.move(node, direction)
+                    
+                    # If the traverseDirection is directly the target, select it immediately
                     if traverseDirection == self.target[0]:
                         selectedNode = traverseDirection
                         break
-                    if selectedNodeVal is None:
+
+                    # For Value Iteration, use the utility values to select the next node
+                    if selectedNodeVal is None or self.values[traverseDirection] > selectedNodeVal:
                         selectedNode = traverseDirection
                         selectedNodeVal = self.values[selectedNode]
-                    else:
-                        tempNode = traverseDirection
-                        if selectedNodeVal < self.values[tempNode]:
-                            selectedNode = tempNode
-                            selectedNodeVal = self.values[tempNode]
 
-            self.explored.append(node)
-            self.algoPath[node] = selectedNode
-            node = selectedNode
+            if selectedNode:
+                steps += 1  # Increment step counter only if a new node is selected
+                self.explored.append(node)  # Mark the current node as explored
+                self.algoPath[node] = selectedNode  # Record the path
+                node = selectedNode  # Move to the next node
+
         end = time.time()
-        self.mainTime = end-start
-        
-        return self.algoPath, self.mainTime
+        self.mainTime = end - start
+        return self.algoPath, self.mainTime, steps
 
 class PolicyIteration(MarkovDecisionProcess):
     def __init__(self, m=None, goal=None, isDeterministic=True):
@@ -157,22 +148,17 @@ class PolicyIteration(MarkovDecisionProcess):
         super().__init__(m, goal, isDeterministic)
 
         self.target = [self.goal]
+
         self.values = {state: 0 for state in self.actions.keys()}
         self.values[self.target[0]] = pow(10, 7)
+
         self.policyValues = {s: random.choice('N') for s in self.actions.keys()}
+
         self._reward = {state: -40 for state in self.actions.keys()}  # LIVING REWARD
         self._reward[self.target[0]] = pow(10, 8)
-        
+
         self.algoPath = {}
         self.mainTime = 0
-
-    def measure_memory_usage(self, algorithm):
-        tracemalloc.start()  # Start memory profiling
-        algorithm()  # Call the algorithm function
-        current, peak = tracemalloc.get_traced_memory()  # Get memory usage
-        self.memory_usage = peak  # Store peak memory usage
-        tracemalloc.stop()  # Stop memory profiling
-        return current, peak
 
     def calculate_policyIteration(self):
         start = time.time()
@@ -212,16 +198,25 @@ class PolicyIteration(MarkovDecisionProcess):
 
         end = time.time()
         self.mainTime = end-start
-
+        
     def create_searchPath(self, currNode):
         start = time.time()
         node = currNode
+        steps = 0  # Initialize step counter
 
         while node != self.target[0]:
+            # Determine the next node based on the current policy
             nextNode = self.move(node, self.policyValues[node])
+
+            if nextNode != node:  # Check to ensure we're not stuck in the same node
+                steps += 1  # Increment step counter when moving to a new node
+
             self.algoPath[node] = nextNode
-            node = nextNode
+            node = nextNode  # Move to the next node
+
+            if node == self.target[0]:  # Break the loop if the target is reached
+                break
+
         end = time.time()
-        self.mainTime = end-start
-        
-        return self.algoPath, self.mainTime
+        self.mainTime = end - start
+        return self.algoPath, self.mainTime, steps
